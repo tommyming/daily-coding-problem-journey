@@ -4,7 +4,6 @@
 import Foundation
 
 func trap(_ height: [Int]) -> Int {
-    // Suppose there is a wall of height 0 at the leftmost and rightmost position
     guard height.count > 2 else { return 0 }
 
     var left = 0
@@ -14,26 +13,26 @@ func trap(_ height: [Int]) -> Int {
     var water = 0
 
     while left < right {
-        if height[left] < height[right] {
+        let leftHeight = height[left]
+        let rightHeight = height[right]
 
-            // If the current height is greater than the leftMax, update the leftMax
-            // The water that is trapped will be counted into puddle.
-            if height[left] >= leftMax {
-                leftMax = height[left]
-            } else {
-                water += leftMax - height[left]
-            }
+        if leftHeight < rightHeight {
+            water += calculateWater(currentHeight: leftHeight, maxHeight: &leftMax)
             left += 1
         } else {
-            // right side is doing the same thing.
-            if height[right] >= rightMax {
-                rightMax = height[right]
-            } else {
-                water += rightMax - height[right]
-            }
+            water += calculateWater(currentHeight: rightHeight, maxHeight: &rightMax)
             right -= 1
         }
     }
 
     return water
+}
+
+private func calculateWater(currentHeight: Int, maxHeight: inout Int) -> Int {
+    if currentHeight >= maxHeight {
+        maxHeight = currentHeight
+        return 0
+    } else {
+        return maxHeight - currentHeight
+    }
 }
